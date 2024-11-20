@@ -4,14 +4,21 @@ from __future__ import print_function, absolute_import, unicode_literals, divisi
 
 import vortex
 from vortex import toolbox
-from vortex.layout.nodes import Task, Driver, Family
+from vortex.layout.nodes import Task, Driver, Family, LoopFamily
 
 from davai_taskutil.mixins import DavaiTaskMixin, GmkpackMixin
 
 
 def setup(t, **kw):
     return Driver(tag='build', ticket=t, options=kw, nodes=[
-        GitRef2Pack(tag='gitref2pack', ticket=t, **kw)
+        Family(tag='gmkpack', ticket=t, nodes=[
+            LoopFamily(tag='loop_g2p', ticket=t,
+                loopconf='compilation_flavours',
+                loopsuffix='.{}',
+                nodes=[
+                    GitRef2Pack(tag='gitref2pack', ticket=t, **kw),
+                ], **kw),
+            ], **kw),
         ],
     )
 
@@ -21,12 +28,11 @@ class GitRef2Pack(Task, DavaiTaskMixin, GmkpackMixin):
     _taskinfo_kind = 'statictaskinfo'
 
     def process(self):
-        self.tasks2wait4_add()
         self._wrapped_init()
 
         # 0./ Promises
         if 'early-fetch' in self.steps or 'fetch' in self.steps:
-            self._wrapped_promise(**self._promised_expertise())
+            pass
             #-------------------------------------------------------------------------------
 
         # 1.1.0/ Reference resources, to be compared to:
@@ -61,14 +67,13 @@ class GitRef2Pack(Task, DavaiTaskMixin, GmkpackMixin):
 
         # 2.2/ Compute step
         if 'compute' in self.steps:
-            self._notify_start_compute()
             self.sh.title('Toolbox algo = tbalgo')
             tbalgo = toolbox.algo(
                 #bundle_cache_dir = self.bundle_src_dir,
                 cleanpack      = self.conf.get('cleanpack', False),
                 compiler_flag  = self.gmkpack_compiler_flag,
                 compiler_label = self.gmkpack_compiler_label,
-                crash_witness  = True,
+                crash_witness  = False,
                 engine         = 'algo',
                 git_ref        = self.conf.IAL_git_ref,
                 homepack       = self.conf.get('homepack', None),
@@ -82,7 +87,6 @@ class GitRef2Pack(Task, DavaiTaskMixin, GmkpackMixin):
             print()
             self.component_runner(tbalgo, [None])
             #-------------------------------------------------------------------------------
-            self.run_expertise()
             #-------------------------------------------------------------------------------
 
         # 2.3/ Flow Resources: produced by this task and possibly used by a subsequent flow-dependant task
@@ -92,7 +96,7 @@ class GitRef2Pack(Task, DavaiTaskMixin, GmkpackMixin):
 
         # 3.0.1/ Davai expertise:
         if 'late-backup' in self.steps or 'backup' in self.steps:
-            self._wrapped_output(**self._output_expertise())
+            pass
             #-------------------------------------------------------------------------------
 
         # 3.0.2/ Other output resources of possible interest:

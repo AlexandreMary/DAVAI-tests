@@ -6,7 +6,7 @@ from footprints import FPDict
 
 import vortex
 from vortex import toolbox
-from vortex.layout.nodes import Task, Driver
+from vortex.layout.nodes import Task, Driver, Family, LoopFamily
 from davai.algo.build import binaries_syntax_in_workdir
 
 from davai_taskutil.mixins import DavaiTaskMixin, GmkpackMixin
@@ -14,7 +14,14 @@ from davai_taskutil.mixins import DavaiTaskMixin, GmkpackMixin
 
 def setup(t, **kw):
     return Driver(tag='build', ticket=t, options=kw, nodes=[
-        Pack2Bin(tag='pack2bin', ticket=t, **kw)
+        Family(tag='gmkpack', ticket=t, nodes=[
+            LoopFamily(tag='loop_g2p', ticket=t,
+                loopconf='compilation_flavours',
+                loopsuffix='.{}',
+                nodes=[
+                    Pack2Bin(tag='pack2bin', ticket=t, **kw),
+                ], **kw),
+            ], **kw),
         ],
     )
 
