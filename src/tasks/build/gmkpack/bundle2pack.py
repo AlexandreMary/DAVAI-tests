@@ -4,14 +4,21 @@ from __future__ import print_function, absolute_import, unicode_literals, divisi
 
 import vortex
 from vortex import toolbox
-from vortex.layout.nodes import Task, Driver, Family
+from vortex.layout.nodes import Task, Driver, Family, LoopFamily
 
 from davai_taskutil.mixins import DavaiTaskMixin, GmkpackMixin
 
 
 def setup(t, **kw):
     return Driver(tag='build', ticket=t, options=kw, nodes=[
-        Bundle2Pack(tag='bundle2pack', ticket=t, **kw)
+        Family(tag='gmkpack', ticket=t, nodes=[
+            LoopFamily(tag='loop_g2p', ticket=t,
+                loopconf='compilation_flavours',
+                loopsuffix='.{}',
+                nodes=[
+                    Bundle2Pack(tag='bundle2pack', ticket=t, **kw)
+                ], **kw),
+            ], **kw),
         ],
     )
 
