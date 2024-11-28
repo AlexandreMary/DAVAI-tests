@@ -25,8 +25,6 @@ def setup(t, **kw):
 
 class GitRef2Pack(Task, DavaiTaskMixin, GmkpackMixin):
 
-    _taskinfo_kind = 'statictaskinfo'
-
     def process(self):
         self._wrapped_init()
 

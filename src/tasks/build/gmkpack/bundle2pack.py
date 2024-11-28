@@ -25,15 +25,12 @@ def setup(t, **kw):
 
 class Bundle2Pack(Task, DavaiTaskMixin, GmkpackMixin):
 
-    _taskinfo_kind = 'statictaskinfo'
-
     def process(self):
-        self.tasks2wait4_add()
         self._wrapped_init()
 
         # 0./ Promises
         if 'early-fetch' in self.steps or 'fetch' in self.steps:
-            self._wrapped_promise(**self._promised_expertise())
+            pass
             #-------------------------------------------------------------------------------
 
         # 1.1.0/ Reference resources, to be compared to:
@@ -90,7 +87,7 @@ class Bundle2Pack(Task, DavaiTaskMixin, GmkpackMixin):
                 cleanpack      = self.conf.get('cleanpack', False),
                 compiler_flag  = self.gmkpack_compiler_flag,
                 compiler_label = self.gmkpack_compiler_label,
-                crash_witness  = True,
+                crash_witness  = False,
                 engine         = 'algo',
                 homepack       = self.conf.get('homepack', None),
                 kind           = 'bundle2pack',
@@ -102,7 +99,6 @@ class Bundle2Pack(Task, DavaiTaskMixin, GmkpackMixin):
             print()
             self.component_runner(tbalgo, [None])
             #-------------------------------------------------------------------------------
-            self.run_expertise()
             #-------------------------------------------------------------------------------
 
         # 2.3/ Flow Resources: produced by this task and possibly used by a subsequent flow-dependant task
@@ -112,7 +108,7 @@ class Bundle2Pack(Task, DavaiTaskMixin, GmkpackMixin):
 
         # 3.0.1/ Davai expertise:
         if 'late-backup' in self.steps or 'backup' in self.steps:
-            self._wrapped_output(**self._output_expertise())
+            pass
             #-------------------------------------------------------------------------------
 
         # 3.0.2/ Other output resources of possible interest:
