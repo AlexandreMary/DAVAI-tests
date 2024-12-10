@@ -5,9 +5,7 @@ from vortex import toolbox
 from vortex.layout.nodes import Driver, Family, LoopFamily
 
 from .raw2odb.batodb import BatorODB
-from .screenings.screening_LAM3D import Screening
-from .minims.minimCNT0_LAM3D import Minim as MinimCNT0
-from .minims.minimOOPS_LAM3D import Minim as MinimOOPS
+from .minims.AnalyseOOPS_LAM3D import AnalyseLAM3D
 
 
 def setup(t, **kw):
@@ -19,14 +17,9 @@ def setup(t, **kw):
                         loopconf='rundates',
                         loopsuffix='.{}',
                         nodes=[
-                        Family('BSM', ticket=t, on_error='delayed_fail', nodes=[
+                        Family('BA1', ticket=t, on_error='delayed_fail', nodes=[
                             BatorODB(tag='batodb', ticket=t, **kw),
-                            Family('multitasks', ticket=t, on_error='delayed_fail', nodes=[
-                                Screening(tag='screening', ticket=t, **kw),
-                                # delayed_fail to let the minimOOPS run before raising error
-                                MinimCNT0(tag='minimCNT0', ticket=t, on_error='delayed_fail', **kw),
-                                MinimOOPS(tag='minimOOPS', ticket=t, **kw),
-                                ], **kw)
+                            AnalyseLAM3D(tag='AnalyseLAM3D', ticket=t, **kw),
                             ], **kw),
                         ], **kw),
                     ], **kw),

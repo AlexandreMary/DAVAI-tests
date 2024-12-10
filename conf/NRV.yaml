@@ -13,8 +13,9 @@ assim:
     - OOPSBSM_4D_arpege  # BSM = Bator+Screening+Minim
     - OOPSBA1_4D_arpege  # BSM = Bator+AllInOne
     - CNT0BSM_4D_arpege  # BSM = Bator+Screening+Minim
-    - BSM_3D_arome  # BSM = Bator+Screening+Minim
     - BsC_arpege  # BsC = Bator_surf+Canari
+    - BSM_3D_arome  # BSM = Bator+Screening+Minim
+    # FIXME: - BA1_3D_arome  # BSM = Bator+Screening+Minim
 
 # mixs: jobs containing several tasks of various families
 #mixs:
