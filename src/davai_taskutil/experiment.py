@@ -3,17 +3,10 @@
 """
 Handle a Davai experiment metadata (context) for Ciboulai.
 """
-
-from __future__ import print_function, absolute_import, division, unicode_literals
-import six
-
 import json
-import sys
 import os
 
 from bronx.stdtypes import date
-
-from . import __version__ as tests_version
 
 
 def _get_env_catalog_details(env):

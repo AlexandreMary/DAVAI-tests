@@ -3,7 +3,6 @@
 """
 Hooks on resources for Davai tasks.
 """
-from __future__ import print_function, absolute_import, unicode_literals, division
 
 
 def hook_fix_varbc(t, rh, withvarbc):
