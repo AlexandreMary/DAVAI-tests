@@ -10,7 +10,7 @@ authors = [
     { name = "Alexandre Mary"  , email = "alexandre.mary@meteo.fr"}
     ]
 dependencies=[
-    "davai_env==1.2.0",
+    #"davai_env==1.2.0",
     "ial_build==1.3.2",
     "ial_expertise==1.2.0",
     "bronx",
