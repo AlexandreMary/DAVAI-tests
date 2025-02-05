@@ -12,11 +12,13 @@ authors = [
 dependencies=[
     #"davai_env==1.2.0",
     "ial_build==1.3.2",
-    "ial_expertise==1.2.0",
+    "ial_expertise[all]==1.2.0",  # includes epygram
     "bronx",
     # indirect dependencies
-    "epygram==2.0.2",
+    #"epygram==2.0.2",
+    # from vortex:
     "requests[socks]",
+    "jinja2",
     ]
 
 [project.urls]
@@ -29,9 +31,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.package-dir]
 davai_taskutil = "src/davai_taskutil"
-
-#[tool.setuptools.package-data]
-#"davai_taskutil" = ["conf/*.ini"]
+tasks = "src/tasks"
 
 [tool.setuptools.dynamic]
 version = {attr = "davai_taskutil.__version__"}
