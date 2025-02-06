@@ -32,7 +32,7 @@ def _get_env_catalog_details(env):
 
 def gather_mkjob_xp_conf(xpid, conf):
     """
-    Gather info from mjob conf file + additional, and write it to file ('xpinfo.json')
+    Gather info from mkjob conf file + additional, and write it to file ('xpinfo.json')
     to be sent to Ciboulai to initialize XP.
     """
     env_catalog_variables = ('davaienv', 'appenv_global', 'appenv_lam', 'appenv_clim', 'appenv_fullpos_partners', 'commonenv')
