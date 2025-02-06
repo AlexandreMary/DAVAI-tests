@@ -302,12 +302,14 @@ class DavaiTaskMixin(WrappedToolboxMixin):
             ignore_reference = self.conf.ignore_reference,
             kind           = 'expertise')
 
-    def _notify_start_step(self, step):
-        """Notify Ciboulai that a step has started."""
+    def _notify_ciboulai(self, step):
+        """Notify Ciboulai of a step."""
         from ial_expertise.task import TaskSummary, task_status
         task_summary = TaskSummary()
         if step == 'inputs':
             task_summary['Status'] = task_status['I...']
+        elif step == 'inputs:done':
+            task_summary['Status'] = task_status['ID']
         elif step == 'compute':
             task_summary['Status'] = task_status['C...']
         notification_file = '.{}_started.json'.format(step)
@@ -324,12 +326,17 @@ class DavaiTaskMixin(WrappedToolboxMixin):
     def _notify_start_inputs(self):
         """Notify Ciboulai that the inputs step has started."""
         if 'early-fetch' in self.steps:
-            self._notify_start_step('inputs')
+            self._notify_ciboulai('inputs')
+
+    def _notify_inputs_done(self):
+        """Notify Ciboulai that the inputs step has finished."""
+        if 'early-fetch' in self.steps:
+            self._notify_ciboulai('inputs:done')
 
     def _notify_start_compute(self):
         """Notify Ciboulai that the compute step has started."""
         if 'compute' in self.steps:
-            self._notify_start_step('compute')
+            self._notify_ciboulai('compute')
 
     def _output_expertise(self):
         """Standard description of the output expertise file."""
