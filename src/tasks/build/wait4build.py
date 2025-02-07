@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import print_function, absolute_import, unicode_literals, division
-
+import sys
 import footprints.util
 import time
 from collections import OrderedDict
@@ -88,17 +86,23 @@ class Wait4Build(Task, BuildMixin):
         print("Begin waiting for '{}' expertise, for up to".format(expertise_description['block']),
               "{} == {} seconds".format(walltime, walltime_in_seconds))
         # start waiting for expertise
+        initial_walltime = walltime_in_seconds
         while not self._expertise_available(start_of_run, **expertise_description):
             # wait for compilation expertise to be present in cache
+            status = 'Waiting time: {:5d}/{:5d}s'.format(initial_walltime - walltime_in_seconds, initial_walltime)
             if walltime_in_seconds <= 0:
                 print("Could not get expertise after supposed maximum Elapsed time: check manually. Exit")
                 exit(-1)
-            print("Time to expiration: {:5d} (s)".format(walltime_in_seconds))
+            elif walltime_in_seconds < initial_walltime:
+                sys.stdout.write('\b' * len(status))
+                sys.stdout.flush()
+            sys.stdout.write(status)
+            sys.stdout.flush()
             time.sleep(int(self.conf.refresh_frequency))
             walltime_in_seconds -= int(self.conf.refresh_frequency)
         else:
             # expertise available: continue
-            print("Expertise available !")
+            print("\nExpertise available !")
             # fetch it
             expertise = toolbox.input(**expertise_description)
             print(t.prompt, 'expertise =', expertise)
@@ -121,10 +125,20 @@ class Wait4Build(Task, BuildMixin):
         #for block in self.conf.wait4steps:
         while len(self._tasks_done) == 0 or self.task2wait4() is not None:
             # beginning: no task registered yet and done == 0
+            cpt = 0
             while self.task2wait4() is None and len(self._tasks_done) == 0:
-                print("Build tasks have not started yet, wait another {}s for them...".format(self.conf.refresh_frequency))
+                status = '{:3d}s'.format(cpt * int(self.conf.refresh_frequency))
+                if cpt == 0:
+                    print("Build tasks have not started yet, waiting for them...")
+                    #print("Build tasks have not started yet, wait another {}s for them...".format(self.conf.refresh_frequency))
+                else:
+                    sys.stdout.write('\b' * len(status))
+                    sys.stdout.flush()
+                sys.stdout.write(status)
+                sys.stdout.flush()
                 time.sleep(int(self.conf.refresh_frequency))
-            print("...OK")
+                cpt += 1
+            print("\n... build tasks started.")
             # here's the next task to wait for
             task = self.task2wait4()
             # get compilation expertise
