@@ -100,7 +100,11 @@ class WrappedToolboxMixin(object):
         """Wrapping of input resource."""
         input_number = len(self._tb_input) + 1
         self.sh.title('Toolbox input {:02}'.format(input_number))
-        r = toolbox.input(**description)
+        try:
+            r = toolbox.input(**description)
+        except Exception:
+            self._notify_inputs_failed()
+            raise
         self._tb_input.append(r)
         print(self.ticket.prompt, 'tb input {:02} ='.format(input_number), r)
         print()
@@ -121,7 +125,11 @@ class WrappedToolboxMixin(object):
         """Wrapping of executable input."""
         exec_number = len(self._tb_exec) + 1
         self.sh.title('Toolbox executable {:02}'.format(exec_number))
-        r = toolbox.executable(**description)
+        try:
+            r = toolbox.executable(**description)
+        except Exception:
+            self._notify_inputs_failed()
+            raise
         self._tb_exec.append(r)
         print(self.ticket.prompt, 'tb exec {:02} ='.format(exec_number), r)
         print()
@@ -308,10 +316,12 @@ class DavaiTaskMixin(WrappedToolboxMixin):
         task_summary = TaskSummary()
         if step == 'inputs':
             task_summary['Status'] = task_status['I...']
+        elif step == 'inputs:failed':
+            task_summary['Status'] = task_status['IF']
         elif step == 'inputs:done':
             task_summary['Status'] = task_status['ID']
         elif step == 'compute':
-            task_summary['Status'] = task_status['C...']
+            task_summary['Status'] = task_status['R...']
         notification_file = '.{}_started.json'.format(step)
         task_summary['Context'] = context_info_for_task_summary(self.ticket.context, jobname=self.conf.jobname)
         task_summary['Updated'] = utcnow().isoformat().split('.')[0]
@@ -327,6 +337,11 @@ class DavaiTaskMixin(WrappedToolboxMixin):
         """Notify Ciboulai that the inputs step has started."""
         if 'early-fetch' in self.steps:
             self._notify_ciboulai('inputs')
+
+    def _notify_inputs_failed(self):
+        """Notify Ciboulai that the inputs step has failed."""
+        if 'early-fetch' in self.steps or 'fetch' in self.steps:
+            self._notify_ciboulai('inputs:failed')
 
     def _notify_inputs_done(self):
         """Notify Ciboulai that the inputs step has finished."""
