@@ -307,6 +307,7 @@ class Screening(Task, DavaiIALTaskMixin, IncludesTaskMixin):
             )
             #-------------------------------------------------------------------------------
 
+        self._notify_inputs_done()
         # 2.2/ Compute step
         if 'compute' in self.steps:
             self._notify_start_compute()

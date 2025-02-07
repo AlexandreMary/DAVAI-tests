@@ -324,6 +324,7 @@ class AnalyseLAM3D(Task, DavaiIALTaskMixin, IncludesTaskMixin):
             )
             #-------------------------------------------------------------------------------
 
+        self._notify_inputs_done()
         # 2.2/ Compute step
         if 'compute' in self.steps:
             self._notify_start_compute()
@@ -336,7 +337,7 @@ class AnalyseLAM3D(Task, DavaiIALTaskMixin, IncludesTaskMixin):
                 kind           = 'ooanalysis',
                 npool          = self.conf.obs_npools,
                 slots          = self.obs_tslots,
-                withscreening  = True,                
+                withscreening  = True,
             )
             print(self.ticket.prompt, 'tbalgo =', tbalgo)
             print()
